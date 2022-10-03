@@ -1,9 +1,12 @@
 module wormhole::guardian_set_upgrade {
+    use std::vector::{Self};
+    //use sui::tx_context::TxContext;
+
     use wormhole::deserialize;
     use wormhole::cursor::{Self};
     use wormhole::myvaa::{Self as vaa};
     //use wormhole::myvaa::{Self as vaa};
-    use wormhole::state;
+    use wormhole::state::{Self, State};
     use wormhole::structs::{
         Guardian,
         create_guardian,
@@ -11,7 +14,6 @@ module wormhole::guardian_set_upgrade {
     };
     use wormhole::myu32::{Self as u32,U32};
     use wormhole::myu16::{Self as u16};
-    use 0x1::vector::{Self};
 
     const E_WRONG_GUARDIAN_LEN: u64 = 0x0;
     const E_NO_GUARDIAN_SET: u64 = 0x1;
@@ -33,7 +35,7 @@ module wormhole::guardian_set_upgrade {
         do_upgrade(parse_payload(vaa::destroy(vaa)))
     }
 
-    fun do_upgrade(upgrade: GuardianSetUpgrade) {
+    fun do_upgrade(s: &mut State, upgrade: GuardianSetUpgrade) {
         let current_index = state::get_current_guardian_set_index();
 
         let GuardianSetUpgrade {
@@ -47,7 +49,7 @@ module wormhole::guardian_set_upgrade {
         );
 
         state::update_guardian_set_index(new_index);
-        state::store_guardian_set(create_guardian_set(new_index, guardians));
+        state::store_guardian_set(s, new_index, create_guardian_set(new_index, guardians));
         state::expire_guardian_set(current_index);
     }
 
