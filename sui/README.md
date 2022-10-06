@@ -5,7 +5,8 @@ Make sure your Cargo version is at least 1.64.0 and then follow the steps below:
 
 # Sui CLI
 - do `sui start` to spin up a local network
-
+- do `rpc-server` to start a server for handling rpc calls
+- do `sui-faucet` to start a faucet for requesting funds from active-address
 
 # State and Child Objects
 The rationale behind using child objects, and attaching them to State (the parent object), is that the alternative of direct wrapping can lead
